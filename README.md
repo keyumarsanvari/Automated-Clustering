@@ -1,3 +1,4 @@
+![image](https://github.com/user-attachments/assets/7f226b55-0a55-4c57-9ce6-802a8bd29a3e)
 
 # Automated Clustering of Geochemical Data
 
