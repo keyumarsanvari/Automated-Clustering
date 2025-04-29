@@ -1,5 +1,5 @@
 
-# Automated Clustering and RNN-Based Analysis of Geochemical Data
+# Automated Clustering of Geochemical Data
 
 **Author:** Keyumars Anvari  
 **Supervisor:** Professor Jörg Benndorf  
