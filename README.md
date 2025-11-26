@@ -1,6 +1,6 @@
 ![image](https://github.com/user-attachments/assets/7f226b55-0a55-4c57-9ce6-802a8bd29a3e)
 
-# Automated Clustering of Geochemical Data
+# GkRNN — Continuity-Aware Multivariate Domaining of Geochemical Drillhole Data
 
 **Author:** Keyumars Anvari  
 **Supervisor:** Professor Jörg Benndorf  
@@ -10,105 +10,115 @@
 
 ## 📄 Project Description
 
-This project automates the preprocessing, clustering, analysis, and visualization of geochemical data collected from boreholes.  
-The goal is to identify patterns and structures within multi-element geochemical datasets using geostatistics and machine learning techniques and to prepare the data for sequential modeling through a Recurrent Neural Network (RNN).
+This repository contains a compact, method-only implementation of **GkRNN**, a hybrid geostatistical–AI workflow for generating continuity-aware, depth-ordered geological domains from multivariate geochemical drillhole data. The approach mirrors **Figure 4** and **Algorithm 1** of the published workflow and is designed for transparent scientific reproducibility.
 
-The workflow integrates:
-- Optimal cluster determination
-- Joint spatial continuity analysis
-- Dimensionality reduction
-- Sequence generation for RNN models
-- 2D and 3D data visualization
+The script assumes that irregular assays have already been **composited** into fixed depth intervals and **CLR-transformed**. From there, the workflow:
 
-The results provide insights into the hidden spatial structures of geochemical properties, helping researchers better understand subsurface variability.
+- captures **joint spatial continuity** using kernel variogram matrices,
+- embeds samples into a **low-dimensional spectral space**,
+- selects an **optimal number of clusters**,
+- enforces geological depth ordering using a **Markov–HMM structure**,
+- refines sequences with an **LSTM model**, and
+- applies geological **post-processing** (minimum thickness, max units per hole).
+
+This produces coherent, stratigraphically consistent domains that reflect both geochemical relationships and spatial structure.
+
+---
+
+## 🔗 Citation
+
+If you use this script, please cite:
+
+**Anvari, K. & Benndorf, J. (2024)**  
+*Automated 3D Multivariate Domaining of a Mine Tailings Deposit Using a Continuity-Aware Geostatistical–AI Workflow*,  
+Minerals 15(12), 1249.  
+https://www.mdpi.com/2075-163X/15/12/1249
 
 ---
 
 ## 🛠️ Features
 
-- **Data Preprocessing:** Cleaning and structuring geochemical data from boreholes.
-- **Pairwise Visualization:** Generating pair plots to explore variable relationships.
-- **Optimal Clustering:** Automatically finding the best number of clusters using a customized elbow method (`autoelbow_rupakbob`).
-- **Spatial Continuity Analysis:** Evaluating joint spatial continuity based on Kernel Density Estimation (KDE) techniques.
-- **3D Geostatistical Visualization:** Visualizing borehole data and clusters in 3D space.
-- **RNN Sequence Preparation:** Generating input sequences for training deep learning models.
-- **Deep Learning (RNN):** Building and training a multi-layer SimpleRNN model to predict cluster labels.
-- **Performance Evaluation:** Plotting training/validation accuracy, calculating confusion matrices.
-- **Comprehensive Output:** Saving combined clustering results to an Excel file for further analysis.
+- **Joint Spatial Continuity:** Kernelized direct and cross variogram matrices with PSD correction  
+- **Spectral Embedding:** Continuity-aware low-dimensional representation of samples  
+- **Elbow-Based Clustering:** Automatic k-selection in spectral space  
+- **Depthwise Stratigraphic Ordering:** Re-labeling clusters by median depth  
+- **Markov–HMM Smoothing:** Enforces geologically plausible transitions  
+- **LSTM Refinement:** Sliding-window sequence learning with Markov-consistency  
+- **Geological Post-Processing:** Minimum thickness merge + maximum units per borehole  
+- **Clean Configuration:** All settings controlled via a single dataclass  
+- **Data-Agnostic:** No dataset included, no hardcoded variable names  
 
 ---
 
 ## 🗺️ Workflow Overview
 
-1. Load and clean geochemical data.
-2. Explore pairwise relationships using seaborn.
-3. Calculate distance matrices.
-4. Determine the optimal number of clusters for each borehole.
-5. Perform KMeans clustering.
-6. Analyze joint spatial continuity across samples.
-7. Prepare sequences augmented with spatial distances for RNN modeling.
-8. Train a deep Recurrent Neural Network (SimpleRNN layers).
-9. Evaluate and visualize the results (2D plots, 3D scatter plots).
-10. Save clustering outcomes into a unified Excel file.
+1. Load composited + CLR-transformed drillhole data  
+2. Build short-range spatial pairs  
+3. Estimate kernelized variogram matrices across lag distances  
+4. Construct continuity-based similarity + spatial proximity similarity  
+5. Form the joint affinity matrix  
+6. Compute spectral embedding of the normalized graph Laplacian  
+7. Select optimal k using elbow analysis  
+8. Perform k-means clustering in spectral space  
+9. Reorder clusters by median depth (stratigraphic ordering)  
+10. Apply HMM smoothing using a constrained Markov transition model  
+11. Build sliding-window sequences and train the LSTM  
+12. Apply LSTM refinement with majority voting  
+13. Enforce minimum thickness and max units per borehole  
+14. Export final domaining results and transition matrix  
 
 ---
 
 ## 📚 Dependencies
 
-Make sure you have Python 3.8+ installed.
-
-Install the required libraries with:
+Install requirements:
 
 ```bash
 pip install -r requirements.txt
+
 ```
 
 **Main libraries used:**
 - `pandas`
 - `numpy`
+- 'scipy'
 - `matplotlib`
-- `seaborn`
-- `scikit-learn`
-- `scipy`
-- `tensorflow`
-- `pykrige`
-- `pyvista`
-- `autoelbow-rupakbob` (custom)
+- 'scikit-learn'
+- 'tensorflow'
 
 ---
 
 ## 🚀 How to Run
 
 1. Clone the repository or download the files.
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Open the Jupyter Notebook:
-   ```bash
-   jupyter notebook Automated_Clustering_for_geochemical.ipynb
-   ```
+2. Prepare a CSV file containing:
+   - borehole ID
+   - X, Y, Z coordinates
+   - CLR-transformed geochemical variables
+3. Edit configuration inside the script:
+ ```bash
+CFG.data_csv = "your_input.csv"
+CFG.GEOCHEM_COLUMNS = ("clr1", "clr2", ...)
+```
 4. Run each cell step-by-step.
 
 ---
 
 ## 📈 Example Outputs
 
-- **Pair Plots** of geochemical variables.
-- **Elbow plots** to determine optimal clusters.
-- **Clustered scatterplots** (PCA-reduced space).
-- **3D geological models** colored by clusters.
-- **Training and validation curves** for the RNN model.
-- **Excel output** summarizing all clustering results.
+- k-means cluster labels
+- Depth-ordered labels
+- HMM-smoothed zones
+- LSTM-refined sequences
+- Final geological domains after post-processing
 
 ---
 
 ## ⚠️ Notes
 
-- The clustering heavily relies on correct distance calculations between samples; ensure your borehole data is properly cleaned.
-- The `autoelbow_rupakbob` package may need manual installation if it's not available on standard Python repositories.
-- This project uses SimpleRNN layers, which are best suited for small to medium-sized datasets. For larger datasets, LSTM or GRU could be considered.
-- Visualization performance might be slower for very large datasets (e.g., > 10,000 points).
+- Compositing + CLR transformation must be done before using this script
+- Fully method-oriented implementation (no dataset included)
+- Suitable for reproducible research and educational demonstrations
 
 
 ---
@@ -119,6 +129,8 @@ For any questions, suggestions, or collaboration interests:
 
 > Keyumars Anvari  
 > Department of Mine Surveying and Geodesy, TU Bergakademie Freiberg  
-> Email: keyumarsanvari@gmail.com
+> Email:
+keyumarsanvari@gmail.com
+Kayumars.Anvari@doktorand.tu-freiberg.de
 
 ---
