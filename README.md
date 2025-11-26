@@ -100,7 +100,7 @@ pip install -r requirements.txt
 CFG.data_csv = "your_input.csv"
 CFG.GEOCHEM_COLUMNS = ("clr1", "clr2", ...)
 ```
-4. Run each cell step-by-step.
+4. Run.
 
 ---
 
