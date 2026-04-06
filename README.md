@@ -131,6 +131,6 @@ For any questions, suggestions, or collaboration interests:
 > Department of Mine Surveying and Geodesy, TU Bergakademie Freiberg  
 > Email:
 keyumarsanvari@gmail.com
-Kayumars.Anvari@doktorand.tu-freiberg.de
+Keyumars.Anvari@doktorand.tu-freiberg.de
 
 ---
